@@ -10,10 +10,25 @@ var _config2 = _interopRequireDefault(_config);
 
 var _commandManager = require('./commands/commandManager.js');
 
+var _commandManager2 = _interopRequireDefault(_commandManager);
+
+var _gameManager = require('./games/gameManager.js');
+
+var _gameManager2 = _interopRequireDefault(_gameManager);
+
+var _gameLoader = require('./games/gameLoader.js');
+
+var _gameLoader2 = _interopRequireDefault(_gameLoader);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var client = new _discord2.default.Client();
-var commandManager = new _commandManager.CommandManager();
+
+var commandManager = new _commandManager2.default();
+var gameManager = new _gameManager2.default(commandManager);
+
+//load games
+(0, _gameLoader2.default)(gameManager);
 
 client.on('ready', function () {
     console.log('Logged in as ' + client.user.tag + '!');

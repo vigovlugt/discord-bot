@@ -3,7 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.CommandManager = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -17,7 +16,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var CommandManager = exports.CommandManager = function () {
+var CommandManager = function () {
     function CommandManager() {
         _classCallCheck(this, CommandManager);
 
@@ -38,10 +37,13 @@ var CommandManager = exports.CommandManager = function () {
     }, {
         key: "onMessage",
         value: function onMessage(message) {
-            var args = message.content.split(" ").shift();
+            var args = message.content.split(" ");
+            args.shift();
+
             var command = message.content.split(" ")[0].slice(1);
+
             if (command in this.commands) {
-                executeCommand(command, args, message);
+                this.executeCommand(command, args, message);
             } else {
                 message.reply(command + " is not a valid command, to check all commands, type " + _config2.default.prefix + "help");
             }
@@ -49,9 +51,11 @@ var CommandManager = exports.CommandManager = function () {
     }, {
         key: "executeCommand",
         value: function executeCommand(command, args, message) {
-            this.commands["command"](args, message);
+            this.commands[command](args, message);
         }
     }]);
 
     return CommandManager;
 }();
+
+exports.default = CommandManager;
