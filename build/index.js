@@ -39,6 +39,7 @@ client.on('message', function (message) {
         // Send command to commandManager to do check for valid command and execute it
         commandManager.onMessage(message);
     }
+    gameManager.onMessage(message);
 });
 
 client.login('MjcwMjkyODc5MjgzNDUzOTYy.DfB6Mw.Ws1UOVrqJs81uMkqjj9ObNEElnI');

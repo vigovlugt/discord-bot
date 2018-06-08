@@ -4,5 +4,5 @@ export default function loadGames(gameManager){
     const games = {
         "tictactoe": TicTacToe
     }
-    gameManager.registerGames();
+    gameManager.registerGames(games);
 }

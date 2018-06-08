@@ -14,20 +14,35 @@ var Game = function () {
         _classCallCheck(this, Game);
 
         this.channel = channel;
-        this.players = [owner];
+        this.owner = owner;
+        this.players = [];
 
         this.maxPlayers = 0;
+        this.minPlayers = 0;
         this.currentPlayers = 0;
+
+        this.started = false;
+
+        this.join(owner);
     }
 
     _createClass(Game, [{
         key: "join",
         value: function join(player) {
             this.players.push(player);
+            this.currentPlayers++;
         }
     }, {
+        key: "start",
+        value: function start() {
+            this.started = true;
+        }
+    }, {
+        key: "end",
+        value: function end() {}
+    }, {
         key: "onMessage",
-        value: function onMessage() {}
+        value: function onMessage(message) {}
     }]);
 
     return Game;

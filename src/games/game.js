@@ -2,17 +2,32 @@
 export default class Game {
     constructor(channel,owner){
         this.channel = channel;
-        this.players = [owner];
+        this.owner = owner;
+        this.players = [];
 
         this.maxPlayers = 0;
+        this.minPlayers = 0;
         this.currentPlayers = 0;
+
+        this.started = false;
+
+        this.join(owner);
     }
 
     join(player){
-        this.players.push(player)
+        this.players.push(player);
+        this.currentPlayers++;
     }
 
-    onMessage(){
+    start(){
+        this.started = true;
+    }
 
+    end(){
+
+    }
+
+    onMessage(message){
+        
     }
 }

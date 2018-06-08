@@ -15,5 +15,5 @@ function loadGames(gameManager) {
     var games = {
         "tictactoe": _tictactoe2.default
     };
-    gameManager.registerGames();
+    gameManager.registerGames(games);
 }
