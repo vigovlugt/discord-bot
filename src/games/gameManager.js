@@ -26,6 +26,10 @@ export default class GameManager{
                         else{
                             const game = new this.gameTypes[args[1]](message.channel,message.author);
                             this.games[message.channel.id] = game;
+                            this.games[message.channel.id].onEnd = ()=>{
+                                delete this.games[message.channel.id];
+                                console.log(this.games)
+                            }
                             message.channel.send(`Game succesfully created, to join type ${config.prefix}game join, ${game.minPlayers - game.currentPlayers} remaining to start, out of max ${game.maxPlayers} players`);
                         }
                     }

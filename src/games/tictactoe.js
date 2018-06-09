@@ -10,9 +10,18 @@ export default class TicTacToe extends Game{
 
         this.maxPlayers = 2;
         this.minPlayers = 2;
-
-        this.turnUser = owner;
+        this.turnIndex = 0;
         this.board = [0,1,2,3,4,5,6,7,8];
+        this.winWays = [
+            [0,1,2],
+            [3,4,5],
+            [6,7,8],
+            [0,3,6],
+            [1,4,7],
+            [2,5,8],
+            [0,4,8],
+            [2,4,6]
+        ];
     }
 
     start(){
@@ -23,13 +32,17 @@ export default class TicTacToe extends Game{
 
     onMessage(message){
         super.onMessage(message);
-        console.log(message.content,parseInt(message.content),isNaN(message.content))
         if(this.players.includes(message.author)){
             const msgInt = parseInt(message.content);
             if(!isNaN(msgInt)){
                 if(msgInt >= 0 && msgInt <= 8){
-                    if(message.author == this.turnUser){
-                        this.doTurn(msgInt);
+                    if(message.author == this.players[this.turnIndex]){
+                        if(this.board[msgInt] === "X" || this.board[msgInt] === "O"){
+                            message.channel.send(`That spot is already taken`);
+                        }
+                        else{
+                            this.doTurn(msgInt);
+                        }
                     }
                 }
             }
@@ -37,9 +50,10 @@ export default class TicTacToe extends Game{
     }
 
     doTurn(cell){
-        this.board[cell] = (this.owner === this.turnUser) ? "X" : "O"
-        this.turnUser = (this.owner === this.turnUser) ? this.players[1] : this.owner;
+        this.board[cell] = (this.turnIndex === 0) ? "X" : "O"
+        this.turnIndex = (this.turnIndex === 0) ? 1 : 0;
         this.sendBoard();
+        this.checkWon();
     }
 
     sendBoard(){
@@ -54,6 +68,20 @@ export default class TicTacToe extends Game{
 -----------
         `
         this.channel.send(boardString);
+    }
+
+    checkWon(){
+        for(let winWay of this.winWays){
+            let cellValues = [];
+            for(let cell of winWay){
+                cellValues.push(this.board[cell]);
+            }
+            if(cellValues[0] === cellValues[1] && cellValues[1] === cellValues[2]){
+                const winner = this.players[cellValues[0] === "X" ? 0 : 1];
+                this.channel.send(`${winner.username} has won!`);
+                this.onEnd();
+            }
+        }
     }
 
 }

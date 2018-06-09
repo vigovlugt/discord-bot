@@ -50,6 +50,10 @@ var GameManager = function () {
                         } else {
                             var game = new _this.gameTypes[args[1]](message.channel, message.author);
                             _this.games[message.channel.id] = game;
+                            _this.games[message.channel.id].onEnd = function () {
+                                delete _this.games[message.channel.id];
+                                console.log(_this.games);
+                            };
                             message.channel.send('Game succesfully created, to join type ' + _config2.default.prefix + 'game join, ' + (game.minPlayers - game.currentPlayers) + ' remaining to start, out of max ' + game.maxPlayers + ' players');
                         }
                     }

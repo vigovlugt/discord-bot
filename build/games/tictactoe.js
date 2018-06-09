@@ -42,9 +42,9 @@ var TicTacToe = function (_Game) {
 
         _this.maxPlayers = 2;
         _this.minPlayers = 2;
-
-        _this.turnUser = owner;
+        _this.turnIndex = 0;
         _this.board = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+        _this.winWays = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
         return _this;
     }
 
@@ -59,13 +59,16 @@ var TicTacToe = function (_Game) {
         key: 'onMessage',
         value: function onMessage(message) {
             _get(TicTacToe.prototype.__proto__ || Object.getPrototypeOf(TicTacToe.prototype), 'onMessage', this).call(this, message);
-            console.log(message.content, parseInt(message.content), isNaN(message.content));
             if (this.players.includes(message.author)) {
                 var msgInt = parseInt(message.content);
                 if (!isNaN(msgInt)) {
                     if (msgInt >= 0 && msgInt <= 8) {
-                        if (message.author == this.turnUser) {
-                            this.doTurn(msgInt);
+                        if (message.author == this.players[this.turnIndex]) {
+                            if (this.board[msgInt] === "X" || this.board[msgInt] === "O") {
+                                message.channel.send('That spot is already taken');
+                            } else {
+                                this.doTurn(msgInt);
+                            }
                         }
                     }
                 }
@@ -74,9 +77,10 @@ var TicTacToe = function (_Game) {
     }, {
         key: 'doTurn',
         value: function doTurn(cell) {
-            this.board[cell] = this.owner === this.turnUser ? "X" : "O";
-            this.turnUser = this.owner === this.turnUser ? this.players[1] : this.owner;
+            this.board[cell] = this.turnIndex === 0 ? "X" : "O";
+            this.turnIndex = this.turnIndex === 0 ? 1 : 0;
             this.sendBoard();
+            this.checkWon();
         }
     }, {
         key: 'sendBoard',
@@ -84,6 +88,64 @@ var TicTacToe = function (_Game) {
             //TODO: improve this shit
             var boardString = '\n-----------\n| ' + this.board[0] + ' | ' + this.board[1] + ' | ' + this.board[2] + ' |\n-----------\n| ' + this.board[3] + ' | ' + this.board[4] + ' | ' + this.board[5] + ' |\n-----------\n| ' + this.board[6] + ' | ' + this.board[7] + ' | ' + this.board[8] + ' |\n-----------\n        ';
             this.channel.send(boardString);
+        }
+    }, {
+        key: 'checkWon',
+        value: function checkWon() {
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = this.winWays[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var winWay = _step.value;
+
+                    var cellValues = [];
+                    var _iteratorNormalCompletion2 = true;
+                    var _didIteratorError2 = false;
+                    var _iteratorError2 = undefined;
+
+                    try {
+                        for (var _iterator2 = winWay[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                            var cell = _step2.value;
+
+                            cellValues.push(this.board[cell]);
+                        }
+                    } catch (err) {
+                        _didIteratorError2 = true;
+                        _iteratorError2 = err;
+                    } finally {
+                        try {
+                            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                                _iterator2.return();
+                            }
+                        } finally {
+                            if (_didIteratorError2) {
+                                throw _iteratorError2;
+                            }
+                        }
+                    }
+
+                    if (cellValues[0] === cellValues[1] && cellValues[1] === cellValues[2]) {
+                        var winner = this.players[cellValues[0] === "X" ? 0 : 1];
+                        this.channel.send(winner.username + ' has won!');
+                        this.onEnd();
+                    }
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
         }
     }]);
 

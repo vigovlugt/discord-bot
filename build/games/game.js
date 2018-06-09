@@ -22,6 +22,7 @@ var Game = function () {
         this.currentPlayers = 0;
 
         this.started = false;
+        this.onEnd = null;
 
         this.join(owner);
     }
